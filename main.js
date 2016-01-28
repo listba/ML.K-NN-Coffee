@@ -1,5 +1,5 @@
 (function() {
-  var calculate, chartData, chartResults, guessType, measureDistance, normalizeData;
+  var calculate, chartData, chartMatrix, chartResults, getRanges, guessType, measureDistance;
 
   $(document).ready(function() {
     var keys, results;
@@ -20,10 +20,11 @@
         data: r.data
       };
     });
-    return chartResults(results);
+    chartResults(results);
+    return chartMatrix(results);
   });
 
-  normalizeData = function(irises) {
+  getRanges = function(irises) {
     var lMax, lMin, wMax, wMin;
     lMin = _.minBy(irises, function(iris) {
       return iris.petallength;
@@ -52,7 +53,7 @@
 
   calculate = function(known, test, k) {
     var ranges;
-    ranges = normalizeData(_.concat(known, test));
+    ranges = getRanges(_.concat(known, test));
     return _.map(test, function(iris) {
       var g, neighbors;
       neighbors = _.sortBy(_.map(_.cloneDeep(known), function(neighbor) {
@@ -85,6 +86,64 @@
       };
     });
     return results = calculate(known, test, k);
+  };
+
+  chartMatrix = function(results) {
+    var classes, g, hrow, m, tbody, th, thead;
+    g = _.groupBy(results[1].data, function(iris) {
+      return iris['guess'];
+    });
+    classes = _.keys(g);
+    m = {
+      "Iris-virginica": {
+        "Iris-virginica": 0,
+        "Iris-versicolor": 0,
+        "Iris-setosa": 0
+      },
+      "Iris-versicolor": {
+        "Iris-virginica": 0,
+        "Iris-versicolor": 0,
+        "Iris-setosa": 0
+      },
+      "Iris-setosa": {
+        "Iris-virginica": 0,
+        "Iris-versicolor": 0,
+        "Iris-setosa": 0
+      }
+    };
+    _.forEach(classes, function(genus) {
+      return _.forEach(g[genus], function(iris) {
+        return m[genus][iris.correctClass] += 1;
+      });
+    });
+    thead = document.getElementById('matrixHead');
+    tbody = document.getElementById('matrixBody');
+    hrow = document.createElement('tr');
+    th = document.createElement('th');
+    th.innerHTML = "Guess";
+    hrow.appendChild(th);
+    _.forEach(classes, function(guess) {
+      var row, td;
+      th = document.createElement('th');
+      th.innerHTML = guess;
+      hrow.appendChild(th);
+      row = document.createElement('tr');
+      td = document.createElement('td');
+      row.appendChild(td);
+      _.forEach(classes, function(actual) {
+        td = document.createElement('td');
+        td.innerHTML = m[guess][actual];
+        return row.appendChild(td);
+      });
+      td = document.createElement('td');
+      td.innerHTML = guess;
+      row.appendChild(td);
+      return tbody.appendChild(row);
+    });
+    th = document.createElement('th');
+    th.innerHTML = "Actual";
+    hrow.appendChild(th);
+    return thead.appendChild(hrow);
   };
 
   chartData = function(data) {

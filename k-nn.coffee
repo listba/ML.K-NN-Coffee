@@ -4,13 +4,15 @@ $(document).ready () ->
 	results = _.map keys, (k) -> 
 		data: guessType(_.cloneDeep(irisData), k, .6)
 		k: k
-	results = _.map results, (r) ->
+	results = _.map(results, (r) ->
 		correct: _.filter r.data, (iris) -> iris.correctClass == iris.guess
 		k: r.k
 		data: r.data
-	chartResults results 
+    )
+	chartResults results
+	chartMatrix results
 
-normalizeData = (irises) ->
+getRanges = (irises) ->
 	lMin = _.minBy(irises, (iris) -> iris.petallength).petallength
 	lMax = _.maxBy(irises, (iris) -> iris.petallength).petallength
 
@@ -27,7 +29,7 @@ measureDistance = (iris, neighbor, ranges) ->
 	Math.sqrt( Math.pow( deltaLength, 2) + Math.pow( deltaWidth, 2) )
 
 calculate = (known, test, k) ->
-	ranges = normalizeData _.concat(known, test)
+	ranges = getRanges _.concat(known, test)
 
 	_.map test, (iris) ->
 		neighbors = 
@@ -55,7 +57,53 @@ guessType = (irises, k, split) ->
 	results = calculate(known, test, k)
 
 
+chartMatrix = (results) ->
+	g = _.groupBy results[1].data, (iris) -> iris['guess']
+	classes = _.keys(g)
+	m = 
+		"Iris-virginica": 
+			"Iris-virginica": 0,
+			"Iris-versicolor": 0,
+			"Iris-setosa": 0
+		"Iris-versicolor":
+			"Iris-virginica": 0,
+			"Iris-versicolor": 0,
+			"Iris-setosa": 0
+		"Iris-setosa": 
+			"Iris-virginica": 0,
+			"Iris-versicolor": 0,
+			"Iris-setosa": 0
+	_.forEach classes, (genus) ->
+		_.forEach g[genus], (iris) ->
+			m[genus][iris.correctClass] += 1
 
+	thead = document.getElementById('matrixHead')
+	tbody = document.getElementById('matrixBody')
+	hrow = document.createElement('tr')
+	th = document.createElement('th')
+	th.innerHTML = "Guess"
+	hrow.appendChild th
+	_.forEach classes, (guess) ->
+		th = document.createElement('th')
+		th.innerHTML = guess
+		hrow.appendChild th
+
+		row = document.createElement('tr')
+		td = document.createElement('td')
+		row.appendChild td #empty child
+		_.forEach classes, (actual) ->
+			td = document.createElement('td')
+			td.innerHTML = m[guess][actual]
+			row.appendChild td
+		td = document.createElement('td')
+		td.innerHTML = guess
+		row.appendChild td
+		tbody.appendChild row
+	th = document.createElement('th')
+	th.innerHTML = "Actual"
+	hrow.appendChild th
+	thead.appendChild hrow
+	
 
 # Unimportant 
 chartData = (data) -> 

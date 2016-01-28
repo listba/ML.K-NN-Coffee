@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+   <head lang="en">
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+   <script src="./node_modules/highcharts/highcharts.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.1/lodash.min.js"></script>
+   <script type="text/javascript" src="./iris.2D.js"></script>
+   <script type="text/javascript" src="./main.js"></script>
    <title>
       K-NN ML Algorithm
    </title>
-   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-   <script src="./node_modules/highcharts/highcharts.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.1/lodash.min.js"></script>
-	<script type="text/javascript" src="./iris.2D.js"></script>
-	<script type="text/javascript" src="./main.js"></script>
 </head>
 <body>
-   <h1>K-NN ML Algorithm</h1>
-   <div id="chart"></div>
-   <div id="results"></div>
+   <div class="container">
+      <h1>K-NN ML Algorithm</h1>
+      <hr>
+      <h2> Confusion Matrix</h2>
+      <table class="table table-striped">
+         <thead id="matrixHead"></thead>
+         <tbody id="matrixBody"></tbody>
+      </table>
+      <hr>
+      <div id="chart"></div>
+      <hr>
+      <div id="results"></div>
+   </div>
 <body>
 </html>
