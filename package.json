@@ -1,0 +1,14 @@
+{
+  "name": "k-nn",
+  "version": "1.0.0",
+  "description": "KNN in JS",
+  "main": "gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "grunt": "^0.4.5"
+  }
+}
